@@ -104,53 +104,6 @@ These metrics are used to evaluate mission quality and future optimization strat
 
 ---
 
-# Repository Structure
-
-```text
-CropFleet/
-├── coverage_planner/
-│   ├── coverage/
-│   │   ├── generate_lanes.py
-│   │   └── __init__.py
-│   │
-│   ├── environments/
-│   │   ├── field_loader.py
-│   │   └── __init__.py
-│   │
-│   ├── mission/
-│   │   ├── mission_generator.py
-│   │   └── __init__.py
-│   │
-│   ├── metrics/
-│   │   ├── mission_metrics.py
-│   │   └── __init__.py
-│   │
-│   ├── path/
-│   │   ├── traversal_generator.py
-│   │   └── __init__.py
-│   │
-│   └── visualization/
-│       ├── visualization.py
-│       └── __init__.py
-│
-├── docs/
-│   └── roadmap.md
-│
-├── media/
-│   ├── field_reference.png
-│   ├── lane_generation_v2.png
-│   ├── lane_generation_v3.png
-│   ├── mission_trajectory.png
-│   └── smoothed_mission.png
-│
-├── research/
-│   └── polygon_points.txt
-│
-└── README.md
-```
-
----
-
 # Example Outputs
 
 The repository currently includes generated visualizations for:
