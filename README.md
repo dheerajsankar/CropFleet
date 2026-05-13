@@ -58,6 +58,18 @@ Future goals include:
 - Obstacle-aware traversal
 - Adaptive field decomposition
 
+# Mission Generation
+
+CropFleet currently generates continuous field-coverage missions by converting ordered coverage segments into connected waypoint trajectories.
+
+The current mission pipeline supports:
+
+- Continuous waypoint generation
+- Zig-zag boustrophedon traversal
+- Polygon-clipped coverage lanes
+- Transition path generation between lanes
+- Mission trajectory visualization
+
 ---
 
 # Repository Structure
@@ -65,14 +77,33 @@ Future goals include:
 ```text
 CropFleet/
 ├── README.md
-├── docs/
-├── media/
-├── coverage_planner/
-│   ├── coverage/
-│   ├── path/
-│   └── visualization/
-├── research/
-└── simulation/
+├── coverage_planner
+│   ├── coverage
+│   │   ├── generate_lanes.py
+│   │   └── __init__.py
+│   ├── environments
+│   │   ├── field_loader.py
+│   │   └── __init__.py
+│   ├── mission
+│   │   ├── __init__.py
+│   │   └── mission_generator.py
+│   ├── path
+│   │   ├── __init__.py
+│   │   └── traversal_generator.py
+│   └── visualization
+│       ├── __init__.py
+│       └── visualization.py
+├── docs
+│   └── roadmap.md
+├── media
+│   ├── field_reference.png
+│   ├── lane_generation_v2.png
+│   ├── lane_generation_v3.png
+│   └── mission_trajectory.png
+├── README.md
+└── research
+    └── polygon_points.txt
+
 ```
 
 ---
