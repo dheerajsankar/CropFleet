@@ -1,74 +1,106 @@
 # CropFleet
 
-CropFleet is an early-stage autonomous agricultural drone coordination project focused on field coverage planning, traversal generation, and future decentralized multi-UAV operations for agricultural environments.
+CropFleet is an autonomous agricultural drone planning project focused on field coverage generation, traversal planning, mission trajectory synthesis, and future research toward decentralized multi-UAV agricultural operations.
 
-The project explores how autonomous drones can efficiently map, cover, monitor, and eventually coordinate operations across irregular agricultural fields such as rice paddies and plantation environments.
+The project explores how autonomous drones can efficiently cover, monitor, and navigate irregular agricultural environments such as rice paddies, plantations, and fragmented farmlands using computational geometry and motion-planning techniques.
 
 ---
 
 # Overview
 
-Current development focuses on:
+CropFleet currently focuses on:
 
-- Polygon-based field boundary handling
-- Coverage lane generation
-- Traversal path generation
-- Coverage visualization
-- ROS2-oriented system architecture
-- Simulation-oriented development workflow
+- Polygon-based field representation
+- Sweep-based coverage lane generation
+- Boustrophedon-style traversal generation
+- Mission waypoint generation
+- Coverage mission evaluation metrics
+- Heading-aware transition smoothing
+- Coverage visualization and analysis
+- Simulation-oriented planning workflows
 
-CropFleet is being developed as part of a broader autonomous agricultural ecosystem that will later integrate with DroneHouse — a drone maintenance, deployment, and charging infrastructure system.
+The project is being developed as part of a broader long-term agricultural robotics ecosystem intended to support autonomous field operations, mission coordination, and drone deployment infrastructure.
 
 ---
 
-# Current Development Progress
+# Current Planning Pipeline
+
+The current planning workflow is structured as:
+
+```text
+Field Polygon
+    ↓
+Coverage Lane Generation
+    ↓
+Traversal Ordering
+    ↓
+Mission Generation
+    ↓
+Transition Smoothing
+    ↓
+Mission Metrics
+    ↓
+Visualization
+```
+
+---
+
+# Current Features
 
 ## Field Boundary Processing
 
-CropFleet currently supports polygon-based field boundary handling for irregular agricultural environments.
+CropFleet supports polygon-based field modeling for irregular agricultural environments.
 
-Current workflow:
+Current capabilities include:
 
-1. Extract or define field boundaries
-2. Convert boundaries into polygon representations
-3. Generate structured coverage lanes
-4. Generate traversal paths for field coverage
-5. Visualize coverage outputs
+- Polygon field representation
+- Boundary extraction and loading
+- Polygon clipping
+- Structured geometric processing
 
 ---
 
-# Coverage Lane Generation
+## Coverage Lane Generation
 
-The current implementation focuses on sweep-based coverage generation within irregular polygon boundaries.
+The current implementation uses sweep-based coverage generation across polygonal fields.
 
 Current capabilities:
 
-- Polygon clipping
-- Structured lane generation
-- Coverage visualization
-- Traversal direction generation
-- Iterative lane refinement
+- Parallel lane generation
+- Polygon-clipped sweep lines
+- Adjustable lane spacing
+- Zig-zag boustrophedon traversal generation
+- Coverage trajectory visualization
 
-Future goals include:
+---
 
-- Boustrophedon decomposition
-- Multi-drone coverage partitioning
-- Turn-cost minimization
-- Battery-aware planning
-- Obstacle-aware traversal
-- Adaptive field decomposition
+## Mission Generation
 
-# Mission Generation
+CropFleet converts ordered coverage segments into continuous waypoint trajectories for field coverage missions.
 
-CropFleet currently generates continuous field-coverage missions by converting ordered coverage segments into connected waypoint trajectories.
-
-The current mission pipeline supports:
+Current capabilities:
 
 - Continuous waypoint generation
-- Zig-zag boustrophedon traversal
-- Polygon-clipped coverage lanes
-- Transition path generation between lanes
-- Mission trajectory visualization
+- Ordered traversal stitching
+- Transition generation between coverage lanes
+- Heading-aware transition smoothing
+- Bezier-based transition interpolation
+- Continuous mission visualization
+
+---
+
+## Coverage Metrics
+
+The planner currently evaluates generated missions using several geometric metrics.
+
+Implemented metrics include:
+
+- Total mission distance
+- Coverage distance
+- Transition distance
+- Coverage efficiency
+
+These metrics are used to evaluate mission quality and future optimization strategies.
 
 ---
 
@@ -76,49 +108,89 @@ The current mission pipeline supports:
 
 ```text
 CropFleet/
-├── README.md
-├── coverage_planner
-│   ├── coverage
-│   │   ├── generate_lanes.py
-│   │   └── __init__.py
-│   ├── environments
-│   │   ├── field_loader.py
-│   │   └── __init__.py
-│   ├── mission
-│   │   ├── __init__.py
-│   │   └── mission_generator.py
-│   ├── path
-│   │   ├── __init__.py
-│   │   └── traversal_generator.py
-│   └── visualization
-│       ├── __init__.py
-│       └── visualization.py
-├── docs
-│   └── roadmap.md
-├── media
-│   ├── field_reference.png
-│   ├── lane_generation_v2.png
-│   ├── lane_generation_v3.png
-│   └── mission_trajectory.png
-├── README.md
-└── research
-    └── polygon_points.txt
-
+├── coverage_planner/
+│   ├── coverage/
+│   │   ├── generate_lanes.py
+│   │   └── __init__.py
+│   │
+│   ├── environments/
+│   │   ├── field_loader.py
+│   │   └── __init__.py
+│   │
+│   ├── mission/
+│   │   ├── mission_generator.py
+│   │   └── __init__.py
+│   │
+│   ├── metrics/
+│   │   ├── mission_metrics.py
+│   │   └── __init__.py
+│   │
+│   ├── path/
+│   │   ├── traversal_generator.py
+│   │   └── __init__.py
+│   │
+│   └── visualization/
+│       ├── visualization.py
+│       └── __init__.py
+│
+├── docs/
+│   └── roadmap.md
+│
+├── media/
+│   ├── field_reference.png
+│   ├── lane_generation_v2.png
+│   ├── lane_generation_v3.png
+│   ├── mission_trajectory.png
+│   └── smoothed_mission.png
+│
+├── research/
+│   └── polygon_points.txt
+│
+└── README.md
 ```
 
 ---
 
-# Project Goals
+# Example Outputs
 
-The long-term objective of CropFleet is to develop a modular agricultural drone ecosystem capable of:
+The repository currently includes generated visualizations for:
 
-- Autonomous field coverage
-- Multi-drone coordination
+- Coverage lane generation
+- Traversal paths
+- Mission trajectories
+- Smoothed lane transitions
+- Lane-spacing comparisons
+- Coverage metric evaluation
+
+---
+
+# Current Research Directions
+
+Current active development areas include:
+
+- Coverage decomposition
+- Concave polygon handling
+- Boundary-aware transition generation
+- Curvature-aware maneuver planning
+- Coverage efficiency optimization
+- Obstacle-aware traversal generation
+- Multi-region field decomposition
+
+---
+
+# Future Goals
+
+Long-term project goals include:
+
+- Boustrophedon cellular decomposition
+- Multi-drone field partitioning
 - Decentralized mission planning
-- Agricultural monitoring
-- Precision agriculture workflows
-- Autonomous deployment and docking
-- Integration with charging and maintenance infrastructure
+- Battery-aware coverage optimization
+- Dubins and curvature-constrained trajectory generation
+- ROS2 integration
+- PX4 simulation workflows
+- Autonomous docking and deployment infrastructure
+- Precision agriculture mission planning
 
 ---
 
@@ -128,17 +200,26 @@ Current and planned technologies include:
 
 - Python
 - C++
+- NumPy
+- Matplotlib
+- Shapely
 - ROS2
 - PX4
 - Gazebo
 - OpenCV
-- NumPy
-- Matplotlib
 
 ---
 
 # Project Status
 
-CropFleet is currently in active early-stage development.
+CropFleet is currently in active early-stage research and development.
 
-This repository serves as a public engineering and research showcase documenting the evolution of the system architecture, coverage-planning pipeline, and future autonomous agricultural drone coordination framework.
+This repository serves as a public engineering and research showcase documenting the evolution of:
+
+- Coverage-planning algorithms
+- Mission trajectory generation
+- Geometric field decomposition
+- Motion-planning concepts
+- Autonomous agricultural robotics workflows
+
+The project is currently focused on foundational planning architecture before future expansion toward multi-agent autonomous agricultural systems.
