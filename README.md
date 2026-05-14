@@ -1,178 +1,268 @@
 # CropFleet
 
-CropFleet is an autonomous agricultural drone planning project focused on field coverage generation, traversal planning, mission trajectory synthesis, and future research toward decentralized multi-UAV agricultural operations.
+A computational geometry research project for **coverage-planning and mission-generation** in autonomous agricultural drones. CropFleet generates waypoint-based coverage missions for irregular agricultural field geometries using sweep-line algorithms and geometric path planning.
 
-The project explores how autonomous drones can efficiently cover, monitor, and navigate irregular agricultural environments such as rice paddies, plantations, and fragmented farmlands using computational geometry and motion-planning techniques.
+## Overview
+
+CropFleet focuses on the geometric and algorithmic aspects of field coverage planning:
+
+- **Coverage lane generation** via parallel sweep-line clipping
+- **Traversal ordering** using boustrophedon ordering
+- **Mission waypoint synthesis** from coverage segments
+- **Geometric path smoothing** using Bezier curves
+- **Coverage metrics** and mission efficiency analysis
+- **Interactive field mapping** and visualization
+
+## Scope
+
+This project is **focused on geometric mission planning research** and does not currently include:
+- Flight control or vehicle dynamics
+- Real-time autonomy or replanning
+- Localization or state estimation
+- Hardware deployment or middleware integration
+- Multi-agent coordination (future research direction)
 
 ---
 
-# Overview
+## System Architecture
 
-CropFleet currently focuses on:
+The planning pipeline is structured as a series of geometric processing stages:
 
-- Polygon-based field representation
-- Sweep-based coverage lane generation
-- Boustrophedon-style traversal generation
-- Mission waypoint generation
-- Coverage mission evaluation metrics
-- Heading-aware transition smoothing
-- Coverage visualization and analysis
-- Simulation-oriented planning workflows
+```
+1. Field Polygon Definition
+   └─ Load and validate field boundary
 
-The project is being developed as part of a broader long-term agricultural robotics ecosystem intended to support autonomous field operations, mission coordination, and drone deployment infrastructure.
+2. Coverage Lane Generation
+   └─ Generate parallel sweep lines clipped to polygon
 
----
+3. Traversal Ordering
+   └─ Order lanes in boustrophedon pattern
 
-# Current Planning Pipeline
+4. Mission Waypoint Generation
+   └─ Construct waypoint path from ordered segments
 
-The current planning workflow is structured as:
+5. Transition Smoothing
+   └─ Apply Bezier curve smoothing between turns
 
-```text
-Field Polygon
-    ↓
-Coverage Lane Generation
-    ↓
-Traversal Ordering
-    ↓
-Mission Generation
-    ↓
-Transition Smoothing
-    ↓
-Mission Metrics
-    ↓
-Visualization
+6. Metrics & Analysis
+   └─ Calculate coverage efficiency and path statistics
+
+7. Visualization
+   └─ Display results and mission metrics
 ```
 
 ---
 
-# Current Features
+## Results & Visualization
 
-## Field Boundary Processing
+### Coverage Lane Generation
 
-CropFleet supports polygon-based field modeling for irregular agricultural environments.
+Parallel sweep lines automatically clipped to irregular polygon boundaries:
 
-Current capabilities include:
+![Lane Generation](media/lane_generation_v2.png)
 
-- Polygon field representation
-- Boundary extraction and loading
-- Polygon clipping
-- Structured geometric processing
+### Mission Waypoint Path
 
----
+Connected waypoints from ordered coverage segments:
 
-## Coverage Lane Generation
+![Mission Trajectory](media/mission_trajectory.png)
 
-The current implementation uses sweep-based coverage generation across polygonal fields.
+### Smoothed Mission with Transitions
 
-Current capabilities:
+Bezier curve smoothing applied to segment transitions:
 
-- Parallel lane generation
-- Polygon-clipped sweep lines
-- Adjustable lane spacing
-- Zig-zag boustrophedon traversal generation
-- Coverage trajectory visualization
+![Smoothed Trajectory](media/with_arcs.png)
 
----
-
-## Mission Generation
-
-CropFleet converts ordered coverage segments into continuous waypoint trajectories for field coverage missions.
-
-Current capabilities:
-
-- Continuous waypoint generation
-- Ordered traversal stitching
-- Transition generation between coverage lanes
-- Heading-aware transition smoothing
-- Bezier-based transition interpolation
-- Continuous mission visualization
+**Example Metrics:**
+- Total Path Distance: 4570.52 pixels
+- Coverage Distance: 3949.15 pixels  
+- Transition Distance: 621.37 pixels
+- **Coverage Efficiency: 86.40%**
 
 ---
 
-## Coverage Metrics
+## Project Structure
 
-The planner currently evaluates generated missions using several geometric metrics.
-
-Implemented metrics include:
-
-- Total mission distance
-- Coverage distance
-- Transition distance
-- Coverage efficiency
-
-These metrics are used to evaluate mission quality and future optimization strategies.
-
----
-
-# Example Outputs
-
-The repository currently includes generated visualizations for:
-
-- Coverage lane generation
-- Traversal paths
-- Mission trajectories
-- Smoothed lane transitions
-- Lane-spacing comparisons
-- Coverage metric evaluation
+```
+coverage_planner/
+├── coverage/          # Lane generation and clipping
+├── environments/      # Field polygon loading and bounds
+├── metrics/           # Mission statistics and analysis
+├── mission/           # Waypoint generation and smoothing
+├── path/              # Traversal ordering
+├── sketcher/          # Interactive boundary mapping
+└── visualization/     # Mission visualization
+```
 
 ---
 
-# Current Research Directions
+## Usage
 
-Current active development areas include:
+### Field Boundary Mapping
 
-- Coverage decomposition
-- Concave polygon handling
-- Boundary-aware transition generation
-- Curvature-aware maneuver planning
-- Coverage efficiency optimization
-- Obstacle-aware traversal generation
-- Multi-region field decomposition
+```bash
+python3 -m coverage_planner.sketcher.map_bound
+```
+Interactive tool for defining field boundaries from reference images.
 
----
+### Generate and Visualize Coverage Mission
 
-# Future Goals
-
-Long-term project goals include:
-
-- Boustrophedon cellular decomposition
-- Multi-drone field partitioning
-- Decentralized mission planning
-- Battery-aware coverage optimization
-- Dubins and curvature-constrained trajectory generation
-- ROS2 integration
-- PX4 simulation workflows
-- Autonomous docking and deployment infrastructure
-- Precision agriculture mission planning
+```bash
+python3 -m coverage_planner.visualization.visualization
+```
+Generates coverage lanes, plans traversal, and displays mission statistics.
 
 ---
 
-# Technology Stack
+## Installation
 
-Current and planned technologies include:
+### Requirements
 
-- Python
-- C++
+- Python 3.8+
 - NumPy
 - Matplotlib
 - Shapely
-- ROS2
-- PX4
-- Gazebo
-- OpenCV
+- OpenCV (cv2)
+
+### Setup
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/CropFleet.git
+cd CropFleet
+
+# Install dependencies
+pip install numpy matplotlib shapely opencv-python
+
+# Run visualization
+python3 -m coverage_planner.visualization.visualization
+```
 
 ---
 
-# Project Status
+## Research & Development
 
-CropFleet is currently in active early-stage research and development.
+### Current Focus
 
-This repository serves as a public engineering and research showcase documenting the evolution of:
+- Sweep-line coverage algorithms for complex polygons
+- Boustrophedon traversal ordering
+- Path smoothing and transition geometry
+- Coverage metrics and efficiency analysis
+- Field boundary extraction and validation
 
-- Coverage-planning algorithms
-- Mission trajectory generation
-- Geometric field decomposition
-- Motion-planning concepts
-- Autonomous agricultural robotics workflows
+### Future Directions
 
-The project is currently focused on foundational planning architecture before future expansion toward multi-agent autonomous agricultural systems.
+- Cellular decomposition methods
+- Multi-region field partitioning
+- Obstacle-aware coverage
+- Curvature-constrained paths
+- Multi-agent field decomposition
+
+---
+
+## Development Roadmap
+
+**Phase 1: Geometric Mission Planning** ✅ (Current)
+- Field polygon representation
+- Sweep-line coverage generation
+- Waypoint synthesis and smoothing
+- Coverage metrics
+
+**Phase 2: Advanced Planning** 🔄 (Future)
+- Multi-region decomposition
+- Obstacle-aware coverage
+- Adaptive coverage planning
+- Curvature constraints
+
+**Phase 3: Integration** 📋 (Future)
+- Flight control integration
+- Hardware deployment
+- Autonomous operations
+- Multi-agent coordination
+
+---
+
+## Technology Stack
+
+### Current Technologies
+- **Python 3.8+** - Core development language
+- **NumPy** - Numerical computations
+- **Matplotlib** - Visualization
+- **Shapely** - Computational geometry
+- **OpenCV** - Image processing and field mapping
+
+### Planned Integration
+- **ROS 2** - Middleware for drone integration
+- **PX4** - Autopilot software
+- **Gazebo** - Simulation environment
+- **C++** - Performance-critical components
+
+---
+
+## Research Disclaimer
+
+**This is a research project focused on computational geometry and mission planning algorithms.** The system currently:
+
+- Generates geometric waypoint paths (not real trajectories)
+- Processes offline, designed for mission planning (not real-time autonomy)
+- Outputs visualization and metrics only (no flight control or hardware integration)
+- Handles simple to moderately complex polygonal fields
+- Is under active development and not suitable for production deployment
+
+## Status & Limitations
+
+**Current Capabilities:**
+- ✅ Polygon-based field representation
+- ✅ Sweep-line coverage generation
+- ✅ Waypoint path synthesis
+- ✅ Mission smoothing and metrics
+- ✅ Interactive field mapping and visualization
+
+**Not Included (Future Work):**
+- Real-time autonomy or flight control
+- State estimation or localization
+- Obstacle avoidance or dynamics constraints
+- Hardware integration or middleware
+- Multi-agent coordination
+
+**Known Limitations:**
+- Offline planning (not real-time)
+- Simple polygon geometries
+- No vehicle dynamics modeling
+- No collision detection or obstacle handling
+
+---
+
+## Contributing
+
+Contributions welcome in these areas:
+- Coverage decomposition algorithms
+- Path smoothing and curvature constraints
+- Field polygon handling improvements
+- Visualization and analysis tools
+- Documentation and examples
+
+---
+
+## Citation
+
+```bibtex
+@software{cropfleet2026,
+  author = {Dheeraj},
+  title = {CropFleet: Coverage Planning and Mission Generation for Agricultural Drones},
+  year = {2026},
+  url = {https://github.com/dheerajsankar/CropFleet}
+}
+```
+
+## License
+
+Open source. See LICENSE file for details.
+
+## Contact
+
+For questions or collaboration:
+- Open an issue on GitHub
+- Contact: Dheeraj Sankar Narayana Mangalath
+
+**Last updated:** May 2026
