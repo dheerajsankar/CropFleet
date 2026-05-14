@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from coverage_planner.enviroments.field_loader import field_loader
+from coverage_planner.environments.field_loader import field_loader
 from coverage_planner.coverage.generate_lanes import generate_lanes
 from coverage_planner.metrics.mission_metrics import calculate_all_metrics
 from coverage_planner.mission.mission_generator import generate_smoothed_mission

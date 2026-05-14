@@ -1,6 +1,6 @@
 
 from shapely.geometry import LineString, MultiLineString
-from coverage_planner.enviroments.field_loader import field_loader
+from coverage_planner.environments.field_loader import field_loader
 
 
 def generate_lanes(field):
