@@ -55,6 +55,19 @@ The planning pipeline is structured as a series of geometric processing stages:
 
 ## Results & Visualization
 
+### Polygon Decomposition
+
+Complex field polygons are decomposed by detecting concave vertices and generating split lines:
+
+![Polygon Decomposition](media/concave_vertices_and_split_lines.png)
+
+**Features:**
+- **Blue**: Field boundary
+- **Green**: Concave vertices detected for decomposition
+- **Orange & Purple**: Horizontal and vertical split lines
+
+This decomposition strategy simplifies complex geometries and improves coverage planning efficiency.
+
 ### Coverage Lane Generation
 
 Parallel sweep lines automatically clipped to irregular polygon boundaries:
