@@ -1,17 +1,19 @@
 # CropFleet
 
-A computational geometry research project for **coverage-planning and mission-generation** in autonomous agricultural drones. CropFleet generates waypoint-based coverage missions for irregular agricultural field geometries using sweep-line algorithms and geometric path planning.
+A computational geometry research prototype for **heuristic coverage path planning** in autonomous systems. CropFleet implements experimental algorithms for waypoint mission synthesis on irregular planar domains using recursive polygon decomposition, sweep-line clipping, and geometric transition generation.
 
 ## Overview
 
-CropFleet focuses on the geometric and algorithmic aspects of field coverage planning:
+CropFleet is a research implementation exploring cellular decomposition and coverage path planning methodologies:
 
-- **Coverage lane generation** via parallel sweep-line clipping
-- **Traversal ordering** using boustrophedon ordering
-- **Mission waypoint synthesis** from coverage segments
-- **Geometric path smoothing** using Bezier curves
-- **Coverage metrics** and mission efficiency analysis
-- **Interactive field mapping** and visualization
+- **Heuristic recursive decomposition** via concavity detection and split-line validation
+- **Parallel sweep-line clipping** for coverage lane generation on decomposed cells
+- **Boustrophedon traversal ordering** (experimental; heuristic-based)
+- **Experimental geometric transition smoothing** using Bezier interpolation
+- **Coverage metrics and path analysis** for comparative algorithm evaluation
+- **Interactive polygon sketching** and offline visualization
+
+**Note:** This project is a research prototype under active development. Algorithmic components are heuristic and experimental. Current methods prioritize geometric coverage completeness over trajectory optimality or constraint satisfaction.
 
 ## Scope
 
@@ -24,6 +26,67 @@ This project is **focused on geometric mission planning research** and does not 
 
 ---
 
+## Computational Pipeline
+
+```
+     Input Polygon
+            ↓
+    ┌─────────────────────┐
+    │ Polygon Validation  │
+    └─────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Heuristic Recursive Decomposition    │
+    │ (Concavity Detection + Splitting)    │
+    └──────────────────────────────────────┘
+            ↓
+    ┌──────────────────────────┐
+    │ Decomposed Cell Set      │
+    └──────────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Parallel Sweep-Line Coverage         │
+    │ (Per-Cell Lane Generation)           │
+    └──────────────────────────────────────┘
+            ↓
+    ┌──────────────────────────┐
+    │ Coverage Segment Set     │
+    └──────────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Heuristic Traversal Ordering         │
+    │ (Boustrophedon-style Alternation)    │
+    └──────────────────────────────────────┘
+            ↓
+    ┌──────────────────────────┐
+    │ Ordered Segment Sequence │
+    └──────────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Mission Waypoint Synthesis           │
+    │ (Endpoint Connection)                │
+    └──────────────────────────────────────┘
+            ↓
+    ┌──────────────────────────┐
+    │ Waypoint Sequence        │
+    └──────────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Experimental Transition Smoothing    │
+    │ (Bezier Interpolation)               │
+    └──────────────────────────────────────┘
+            ↓
+    ┌──────────────────────────┐
+    │ Smoothed Path Sequence   │
+    └──────────────────────────┘
+            ↓
+    ┌──────────────────────────────────────┐
+    │ Metrics & Visualization              │
+    └──────────────────────────────────────┘
+```
+
+---
+
 ## System Architecture
 
 The planning pipeline is structured as a series of geometric processing stages:
@@ -32,47 +95,98 @@ The planning pipeline is structured as a series of geometric processing stages:
 1. Field Polygon Definition
    └─ Load and validate field boundary
 
-2. Coverage Lane Generation
-   └─ Generate parallel sweep lines clipped to polygon
+2. Heuristic Recursive Decomposition
+   └─ Detect concave vertices and recursively partition complex geometries
 
-3. Traversal Ordering
-   └─ Order lanes in boustrophedon pattern
+3. Coverage Lane Generation
+   └─ Generate parallel sweep lines clipped to decomposed cells
 
-4. Mission Waypoint Generation
-   └─ Construct waypoint path from ordered segments
+4. Traversal Ordering (Heuristic)
+   └─ Order lanes using boustrophedon-style alternation
 
-5. Transition Smoothing
-   └─ Apply Bezier curve smoothing between turns
+5. Mission Waypoint Generation
+   └─ Connect ordered segments into waypoint sequence
 
-6. Metrics & Analysis
+6. Experimental Transition Smoothing
+   └─ Apply Bezier interpolation between segment endpoints
+
+7. Metrics & Analysis
    └─ Calculate coverage efficiency and path statistics
 
-7. Visualization
-   └─ Display results and mission metrics
+8. Visualization
+   └─ Display results and performance metrics
 ```
+
+---
+
+## Algorithmic Details
+
+### Concavity Detection
+
+Identifies reflex (concave) vertices in the polygon using the cross-product test on consecutive edge vectors. Determines polygon winding order via the shoelace formula, then applies signed cross-product analysis to classify vertices.
+
+### Recursive Polygon Decomposition
+
+Heuristic recursive splitting strategy that:
+1. Detects all concave vertices
+2. Generates horizontal and vertical split-line candidates from each concave point to polygon boundary
+3. Validates splits (checks that they create ≥2 separate pieces)
+4. Selects the longest valid split to partition the polygon
+5. Recursively applies decomposition to child polygons until:
+   - Polygon area ≤ 0.5% of original, OR
+   - Polygon is convex (no concave vertices), OR
+   - No valid splits exist
+
+Child polygons are rejected if they exhibit extreme aspect ratios (>10:1) to avoid pathological slivers.
+
+### Parallel Sweep-Line Clipping
+
+Generates vertical parallel lines at regular spacing across the bounding box. Each line is extended beyond polygon bounds and intersected with the polygon geometry. Valid intersection segments are retained as coverage lanes.
+
+### Traversal Ordering (Heuristic)
+
+Implements a simple boustrophedon-style heuristic: orders coverage segments sequentially while alternating traversal direction (forward/backward) to reduce turn-around transitions. **Note:** This is a basic ordering heuristic; no graph-based optimization or endpoint-distance minimization is performed. Inter-cell traversal remains unoptimized.
+
+### Transition Smoothing
+
+Generates Bezier curve interpolation between segment endpoints using a quadratic Bezier formula with fixed control-point placement. **Warning:** Smoothed curves may exit the original polygon boundary; this is visualization-oriented interpolation, not constraint-aware trajectory generation.
 
 ---
 
 ## Results & Visualization
 
-### Polygon Decomposition
+### Polygon Decomposition (Heuristic Recursive Splitting)
 
-Complex field polygons are decomposed by detecting concave vertices and generating split lines:
+Complex polygons are partitioned using concavity detection and split-line validation:
 
-![Polygon Decomposition](media/concave_vertices_and_split_lines.png)
+![Polygon Decomposition](media/decomposition.png)
 
-**Features:**
-- **Blue**: Field boundary
-- **Green**: Concave vertices detected for decomposition
-- **Orange & Purple**: Horizontal and vertical split lines
+**Visualization Elements:**
+- **Blue**: Original polygon boundary
+- **Green**: Detected concave vertices (reflex angles)
+- **Orange & Purple**: Candidate split lines (horizontal and vertical)
 
-This decomposition strategy simplifies complex geometries and improves coverage planning efficiency.
+This heuristic decomposition approach exploits concave vertices to partition complex geometries into simpler cells. The method is not optimal; it is experimental and uses greedy split selection (longest candidate line).
 
-### Coverage Lane Generation
+### Coverage Lane Generation from Decomposed Cells
 
-Parallel sweep lines automatically clipped to irregular polygon boundaries:
+Parallel sweep-line clipping is applied to each decomposed cell:
 
-![Lane Generation](media/lane_generation_v2.png)
+![Lane Generation from Decomposition](media/generate_lanes_to_decomposites.png)
+
+Lanes are clipped to cell boundaries with configurable spacing. Lane orientation is fixed (vertical sweep lines); no dynamic orientation selection is implemented.
+
+### Lane Spacing Configurations
+
+Comparative coverage with different lane spacings:
+
+![Lane Spacing 20](media/lane_spaceing-20.png)
+**Lane Spacing: 20 units** - Higher density coverage, increased path length
+
+![Lane Spacing 40](media/lane_spaceing-40.png)
+**Lane Spacing: 40 units** - Standard spacing, baseline efficiency
+
+Lane spacing is a parameter; optimal spacing selection is not automated.
 
 ### Mission Waypoint Path
 
@@ -80,11 +194,13 @@ Connected waypoints from ordered coverage segments:
 
 ![Mission Trajectory](media/mission_trajectory.png)
 
-### Smoothed Mission with Transitions
+### Smoothed Mission with Experimental Transition Interpolation
 
-Bezier curve smoothing applied to segment transitions:
+Quadratic Bezier curve interpolation applied between segment transitions:
 
 ![Smoothed Trajectory](media/with_arcs.png)
+
+**Note:** Transition smoothing is visualization-oriented geometric interpolation. Smoothed curves may exit the original polygon boundary and do not respect dynamics constraints. This is not trajectory planning; it is heuristic path visualization.
 
 **Example Metrics:**
 - Total Path Distance: 4570.52 pixels
@@ -125,6 +241,32 @@ python3 -m coverage_planner.visualization.visualization
 ```
 Generates coverage lanes, plans traversal, and displays mission statistics.
 
+### Python API Usage
+
+```python
+from shapely.geometry import Polygon
+from coverage_planner.coverage.coverage_pipeline import run_pipe
+from coverage_planner.path.traversal_generator import generate_traversal
+from coverage_planner.mission.mission_generator import generate_mission
+from coverage_planner.metrics.mission_metrics import calculate_all_metrics
+
+# Define field polygon
+field = Polygon([(0, 0), (100, 0), (100, 100), (0, 100)])
+
+# Generate coverage segments
+segments = run_pipe(field)
+
+# Create traversal path
+traversal = generate_traversal(segments)
+
+# Generate mission waypoints
+waypoints = generate_mission(traversal)
+
+# Calculate metrics
+metrics = calculate_all_metrics(waypoints, traversal)
+print(f"Coverage Efficiency: {metrics['coverage_efficiency']:.2f}%")
+```
+
 ---
 
 ## Installation
@@ -157,19 +299,50 @@ python3 -m coverage_planner.visualization.visualization
 
 ### Current Focus
 
-- Sweep-line coverage algorithms for complex polygons
-- Boustrophedon traversal ordering
-- Path smoothing and transition geometry
-- Coverage metrics and efficiency analysis
-- Field boundary extraction and validation
+- Heuristic recursive polygon decomposition via concavity detection
+- Parallelizable sweep-line coverage generation
+- Boustrophedon-style traversal ordering strategies
+- Coverage metrics, efficiency analysis, and comparative benchmarking
+- Polygon input validation and boundary extraction
 
 ### Future Directions
 
-- Cellular decomposition methods
-- Multi-region field partitioning
-- Obstacle-aware coverage
-- Curvature-constrained paths
-- Multi-agent field decomposition
+- Advanced cellular decomposition methods (trapezoidal, Voronoi-based)
+- Multi-region field partitioning and hierarchical planning
+- Constraint-aware trajectory smoothing (boundary-aware, curvature-limited)
+- Obstacle modeling and avoidance integration
+- Dynamic replanning and real-time autonomy frameworks
+- Multi-agent field decomposition and cooperative planning
+
+---
+
+## Current Research Challenges
+
+The following areas represent active research problems in this codebase:
+
+1. **Inter-Cell Traversal Optimization**
+   - Current: Direct endpoint-to-endpoint connections
+   - Challenge: Minimize transition cost between decomposed cells; consider adjacency relationships
+
+2. **Transition Minimization**
+   - Current: Fixed alternating traversal direction (heuristic)
+   - Challenge: Optimize traversal ordering using graph-based methods or dynamic programming
+
+3. **Constraint-Aware Smoothing**
+   - Current: Visualization-oriented Bezier interpolation (boundary-unaware)
+   - Challenge: Generate smooth trajectories respecting polygon boundary constraints and vehicle dynamics
+
+4. **Coverage Continuity Between Cells**
+   - Current: No explicit validation of coverage overlap or gaps at cell boundaries
+   - Challenge: Ensure seamless coverage across decomposed regions without duplication or gaps
+
+5. **Decomposition Optimality**
+   - Current: Greedy longest-split selection; no global optimality guarantee
+   - Challenge: Explore algorithms balancing decomposition complexity vs. cell shape quality
+
+6. **Adjacency-Aware Traversal Ordering**
+   - Current: Simple sequential segment ordering
+   - Challenge: Leverage cell adjacency information to reduce expensive inter-cell transitions
 
 ---
 
@@ -177,9 +350,9 @@ python3 -m coverage_planner.visualization.visualization
 
 **Phase 1: Geometric Mission Planning** ✅ (Current)
 - Field polygon representation
-- Sweep-line coverage generation
-- Waypoint synthesis and smoothing
-- Coverage metrics
+- Heuristic sweep-line coverage generation
+- Waypoint synthesis and geometric smoothing
+- Coverage metrics and visualization
 
 **Phase 2: Advanced Planning** 🔄 (Future)
 - Multi-region decomposition
@@ -214,35 +387,49 @@ python3 -m coverage_planner.visualization.visualization
 
 ## Research Disclaimer
 
-**This is a research project focused on computational geometry and mission planning algorithms.** The system currently:
+**This is a research prototype focused on computational geometry and cellular decomposition methodologies.** Current implementation:
 
-- Generates geometric waypoint paths (not real trajectories)
-- Processes offline, designed for mission planning (not real-time autonomy)
-- Outputs visualization and metrics only (no flight control or hardware integration)
-- Handles simple to moderately complex polygonal fields
-- Is under active development and not suitable for production deployment
+- Implements heuristic algorithms (not optimal or formally proven)
+- Generates geometric waypoint sequences (not real-world trajectories)
+- Operates offline (not designed for real-time replanning or autonomous flight)
+- Produces visualization and metrics only (no flight control, state estimation, or hardware integration)
+- Handles single connected non-self-intersecting polygons with moderate concavity
+- Is under active development; algorithmic components are experimental
+
+**This is NOT suitable for production deployment or autonomous vehicle control without significant additional development.**
 
 ## Status & Limitations
 
 **Current Capabilities:**
-- ✅ Polygon-based field representation
-- ✅ Sweep-line coverage generation
-- ✅ Waypoint path synthesis
-- ✅ Mission smoothing and metrics
-- ✅ Interactive field mapping and visualization
+- ✅ Polygon input validation and bounding-box analysis
+- ✅ Heuristic recursive decomposition (concavity-based splitting)
+- ✅ Parallel sweep-line coverage lane generation
+- ✅ Waypoint sequence synthesis (endpoint-based ordering)
+- ✅ Geometric path interpolation (Bezier-based)
+- ✅ Path metrics (distance, efficiency, coverage analysis)
+- ✅ Interactive polygon sketching and offline visualization
 
-**Not Included (Future Work):**
-- Real-time autonomy or flight control
-- State estimation or localization
-- Obstacle avoidance or dynamics constraints
-- Hardware integration or middleware
-- Multi-agent coordination
+**Experimental / Under Development:**
+- Traversal ordering (currently heuristic; optimization pending)
+- Inter-cell transition strategy (no optimized boundary-crossing heuristics)
+- Transition smoothing (visualization-oriented; not constraint-aware)
+- Coverage continuity between decomposed cells (no explicit validation)
 
-**Known Limitations:**
-- Offline planning (not real-time)
-- Simple polygon geometries
-- No vehicle dynamics modeling
-- No collision detection or obstacle handling
+**Not Included (Future Research):**
+- Real-time autonomy or dynamic replanning
+- State estimation, localization, or sensor fusion
+- Obstacle avoidance or collision checking
+- Dynamics constraints or curvature limits
+- Multi-agent coordination or cooperative planning
+- Hardware integration or flight control middleware
+
+**Known Algorithmic Limitations:**
+- Decomposition uses greedy split selection (longest valid split); not globally optimal
+- Traversal ordering is simple heuristic (alternating directions); no advanced graph optimization
+- Transition smoothing can exit polygon boundary (not constraint-aware)
+- Lane orientation is fixed (vertical); no adaptive orientation selection
+- No handling of polygon holes or multi-polygon domains
+- Endpoint connection between cells is direct (no intelligent waypoint insertion)
 
 ---
 

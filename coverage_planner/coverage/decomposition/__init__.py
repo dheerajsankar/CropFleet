@@ -1,9 +1,10 @@
-"""Polygon decomposition utilities.
+"""Polygon decomposition utilities for field coverage planning.
 
-This subpackage provides tools for detecting concave vertices and generating
-decomposition lines to split complex polygons into simpler regions.
+This package provides tools for decomposing complex field polygons into
+simpler cells by detecting and exploiting concave vertices.
 
 Modules:
-    - concavity_detector: Detect concave (reflex) vertices in polygons
-    - split_generator: Generate decomposition lines at concave vertices
+    - concavity_detector: Detect concave vertices in polygons
+    - split_generator: Generate split lines from concave vertices
+    - recursive_decomposer: Recursively decompose polygons into cells
 """

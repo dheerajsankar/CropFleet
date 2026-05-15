@@ -1,89 +1,125 @@
-"""Module for visualizing field coverage planning results.
+"""Interactive visualization of coverage planning results.
 
-This module provides visualization of the complete coverage planning pipeline,
-including field boundary, concave vertices, decomposition lines, coverage lanes,
-traversal path, and performance metrics.
+This module provides visualization of the entire coverage planning pipeline,
+including polygon decomposition, coverage lanes, split lines, and the final
+mission trajectory with performance metrics.
 """
 
 from matplotlib import pyplot as plt
+from matplotlib.patches import Polygon
+from matplotlib.colors import hsv_to_rgb
+import numpy as np
 from coverage_planner.environments.field_loader import field_loader
 from coverage_planner.coverage.generate_lanes import generate_lanes
 from coverage_planner.metrics.mission_metrics import calculate_all_metrics
-from coverage_planner.mission.mission_generator import generate_smoothed_mission
+from coverage_planner.mission.mission_generator import generate_mission
 from coverage_planner.path.traversal_generator import generate_traversal
-from coverage_planner.coverage.decomposition.concavity_detector import detect_concave_vertices
-from coverage_planner.coverage.decomposition.split_generator import split_generator
+from coverage_planner.coverage.decomposition.concavity_detector import (
+    detect_concave_vertices
+)
+from coverage_planner.coverage.decomposition.split_generator import (
+    split_generator,
+    split_validation
+)
+from coverage_planner.coverage.decomposition.recursive_decomposer import (
+    recursive_decompose
+)
+from coverage_planner.coverage.coverage_pipeline import run_pipe
 
 
 def visualize_coverage():
-    """Visualize the complete field coverage planning solution.
+    """Execute and visualize the complete coverage planning pipeline.
 
-    Orchestrates the entire coverage planning pipeline and displays results
-    in an interactive matplotlib figure:
-    - Field boundary (blue)
-    - Concave vertices detected for decomposition (green)
-    - Horizontal and vertical split lines (orange and purple)
-    - Smoothed mission trajectory (red)
-    - Mission metrics (distance, efficiency) displayed on plot
+    Loads a field polygon, runs the full coverage planning pipeline
+    (decomposition, lane generation, trajectory planning), and displays
+    the results with:
+    - Field boundary (blue line)
+    - Decomposed cells (colored regions)
+    - Concave vertices (green dots)
+    - Split lines (orange for horizontal, purple for vertical)
+    - Mission trajectory (red line)
+    - Mission metrics (distance, efficiency)
 
-    The function loads a field, performs decomposition, generates coverage
-    lanes, creates an efficient traversal path, smooths the waypoints, and
-    calculates performance metrics.
-
-    Returns:
-        None: Displays the visualization using matplotlib's interactive mode.
+    The visualization combines all stages of the coverage planning system
+    in a single comprehensive figure.
     """
-    # Step 1: Load field geometry
+    # Load field configuration from file
     field = field_loader()
     polygon = field["polygon"]
     
-    # Step 2: Detect concave vertices for polygon decomposition
+    # Detect concave vertices for decomposition
     concave_points = detect_concave_vertices(polygon)
     
-    # Step 3: Generate decomposition lines at concave points
+    # Generate split lines from concave vertices
     hor_split_lines, ver_split_lines = split_generator(polygon, concave_points)
     
-    # Step 4: Generate coverage lanes
-    coverage_segments = generate_lanes(field)
+    # Validate that split lines actually partition the polygon
+    valid_hor_splits, valid_ver_splits = split_validation(
+        polygon, hor_split_lines, ver_split_lines
+    )
     
-    # Step 5: Create traversal path with alternating directions
+    # Execute complete coverage planning pipeline
+    coverage_segments = run_pipe(field["polygon"])
+    
+    # Generate traversal order (boustrophedon pattern)
     traversal_path = generate_traversal(coverage_segments)
     
-    # Step 6: Smooth the traversal path into continuous waypoints
-    smoothed_waypoints = generate_smoothed_mission(traversal_path)
+    # Convert to waypoint path
+    smoothed_waypoints = generate_mission(traversal_path)
     
-    # Step 7: Calculate mission performance metrics
-    metrics = calculate_all_metrics(smoothed_waypoints, ordered_segments=traversal_path)
+    # Decompose polygon for visualization
+    decomposed_polygons = recursive_decompose(field["polygon"])
+    
+    # Calculate performance metrics
+    metrics = calculate_all_metrics(smoothed_waypoints, traversal_path)
 
-    # Create figure for visualization
+    # Create figure and axes
     fig, ax = plt.subplots(figsize=(12, 10))
 
-    # Plot field boundary
+    # Plot field boundary (blue line)
     x, y = field["polygon"].exterior.xy
     ax.plot(x, y, color='blue', linewidth=2, label='Field Boundary')
-    
-    # Plot concave vertices (if any)
+
+    # Plot decomposed cells with distinct colors for visual distinction
+    num_cells = len(decomposed_polygons)
+    for idx, poly in enumerate(decomposed_polygons):
+        # Generate distinct color using HSV color space
+        # This provides perceptually uniform color spacing
+        hue = idx / num_cells if num_cells > 0 else 0
+        color = hsv_to_rgb([hue, 0.7, 0.9])
+        
+        # Create filled polygon patch
+        coords = list(poly.exterior.coords)
+        patch = Polygon(
+            coords, facecolor=color, edgecolor='black',
+            linewidth=1, alpha=0.7
+        )
+        ax.add_patch(patch)
+
+    # Plot concave vertices (green dots) - decomposition points
     if concave_points:
         concave_x = [point[0] for point in concave_points]
         concave_y = [point[1] for point in concave_points]
-        ax.scatter(concave_x, concave_y, color='green', s=50, label='Concave Vertices', zorder=5)
+        ax.scatter(
+            concave_x, concave_y, color='green', s=50,
+            label='Concave Vertices', zorder=5
+        )
 
-    # Plot horizontal and vertical decomposition split lines
-    for line in hor_split_lines:
+    # Plot split lines: orange for horizontal, purple for vertical
+    for line in valid_hor_splits:
         x, y = line.xy
         ax.plot(x, y, color='orange', linewidth=2)
-
-    for line in ver_split_lines:
+    
+    for line in valid_ver_splits:
         x, y = line.xy
         ax.plot(x, y, color='purple', linewidth=2)
 
-    # Plot the continuous mission trajectory
+    # Plot the mission trajectory (red line)
     mission_x = [point[0] for point in smoothed_waypoints]
     mission_y = [point[1] for point in smoothed_waypoints]
     ax.plot(mission_x, mission_y, color='red', linewidth=2, label='Mission Trajectory')
 
-    # Display mission metrics on the plot 
-    # Format and display mission metrics box
+    # Display mission metrics in bottom-right corner
     fig.text(
         0.78,
         0.02,
@@ -96,7 +132,7 @@ def visualize_coverage():
         fontsize=10,
         bbox=dict(facecolor='white', alpha=0.8)
     )
-
+    
     # Configure plot appearance
     ax.set_title('Field Coverage Visualization')
     ax.set_xlabel('X Coordinate')
@@ -104,9 +140,9 @@ def visualize_coverage():
     ax.legend()
     ax.grid()
     ax.axis('equal')
-    
-    # Display the visualization
     plt.show()
+
+
 
 if __name__ == "__main__":
     visualize_coverage()
