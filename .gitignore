@@ -1,6 +1,61 @@
-__pycache__/
-*.pyc
-.vscode/
+# ROS2 build artifacts
 build/
 install/
 log/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# VSCode
+.vscode/
+
+# Virtual environments
+venv/
+.env/
+
+# ROS generated
+*.egg-info/
+
+# Colcon
+.colcon/
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Linux
+*.swp
+.DS_Store
+
+# Temporary
+tmp/
+temp/
+
+# RViz configs (optional)
+*.rviz
+
+# ROS bag files
+*.db3
+*.mcap
+
+# ROS logs
+ros_logs/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+
+# IDE
+.idea/
+
+# Python packaging
+dist/
+*.whl
+
+# Environment variables
+.envrc
