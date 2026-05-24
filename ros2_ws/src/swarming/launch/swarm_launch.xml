@@ -1,0 +1,58 @@
+<launch>
+
+    <node
+        pkg="planner"
+        exec="mission_manager"
+        name="mission_manager"
+        output="screen"
+    />
+
+    <node
+        pkg="planner"
+        exec="visualization"
+        name="visualization"
+        output="screen"
+    />
+
+
+    <node
+        pkg="planner"
+        exec="drone_node"
+        name="drone1"
+        output="screen"
+    >
+
+        <param
+            name="drone_id"
+            value="drone1"
+        />
+
+        <param
+            name="simulate_failure"
+            value="false"
+        />
+
+    </node>
+
+    <node
+        pkg="planner"
+        exec="drone_node"
+        name="drone2"
+        output="screen"
+    >
+
+        <param
+            name="drone_id"
+            value="drone2"
+        />
+
+    </node>
+
+    <node
+        pkg="rviz2"
+        exec="rviz2"
+        name="rviz2"
+        output="screen"
+    />
+
+</launch>
