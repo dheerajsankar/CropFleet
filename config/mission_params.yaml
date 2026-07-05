@@ -1,0 +1,10 @@
+# Optional parameter overrides: ros2 launch ... or pass with --params-file.
+# Node names must match the launch file (mission_manager, drone1, drone2).
+mission_manager:
+  ros__parameters:
+    num_drones: 2
+
+/**:
+  ros__parameters:
+    mission_altitude: -5.0   # NED down, i.e. 5 m above ground
+    waypoint_threshold: 1.0  # meters

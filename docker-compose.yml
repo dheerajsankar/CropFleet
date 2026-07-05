@@ -1,0 +1,30 @@
+services:
+  cropfleet:
+    build:
+      context: .
+      args:
+        ROS_DISTRO: humble
+        PX4_MSGS_BRANCH: main
+    image: cropfleet:humble
+    network_mode: host
+    volumes:
+      # Live-reload config without rebuilding the image
+      - ./config:/ros2_ws/config:ro
+      # X11 socket for the PyQt5 fleet_gui (Linux hosts).
+      # On macOS/Windows this path doesn't exist; XQuartz/VcXsrv use the network
+      # transport instead (see DISPLAY note below), so the bind mount is skipped
+      # there automatically by Docker if the source is absent — keep it for Linux.
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - ROS_DOMAIN_ID=0
+      # GUI display. On Linux this forwards your host X server; first run:
+      #   xhost +local:docker
+      # On macOS install XQuartz, enable "Allow connections from network clients",
+      # run `xhost + 127.0.0.1`, then start with:
+      #   DISPLAY=host.docker.internal:0 docker compose up
+      - DISPLAY=${DISPLAY:-:0}
+      # Needed by some Qt versions when running over a forwarded X connection
+      - QT_X11_NO_MITSHM=1
+    stdin_open: true
+    tty: true
+    restart: unless-stopped

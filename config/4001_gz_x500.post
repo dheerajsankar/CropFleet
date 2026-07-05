@@ -1,0 +1,10 @@
+# Sourced automatically by PX4's rcS after airframe 4001_gz_x500 boots
+# (PX4 convention: <autostart_file>.post is auto-included if present).
+#
+# This swarm is flown entirely over ROS2/uXRCE-DDS offboard control — no
+# QGroundControl is ever connected, so PX4's MAVLink "GCS connection lost"
+# check never clears and blocks arming in every mode (see
+# src/modules/commander/HealthAndArmingChecks/checks/rcAndDataLinkCheck.cpp).
+# The x500 airframe defaults NAV_DLL_ACT to 2 (Return), which enables that
+# arming-blocking check; disable it since there's no GCS in this loop.
+param set NAV_DLL_ACT 0

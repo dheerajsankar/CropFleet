@@ -1,0 +1,26 @@
+<svg width="160" height="160" viewBox="40 40 160 160" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>CropFleet icon</title>
+<desc>A white quadcopter drone icon over alternating green field-lane stripes inside a rounded dark green badge.</desc>
+<defs>
+<clipPath id="badge"><rect x="40" y="40" width="160" height="160" rx="28"/></clipPath>
+</defs>
+<rect x="40" y="40" width="160" height="160" rx="28" fill="#14532d"/>
+<g clip-path="url(#badge)">
+<rect x="40" y="40" width="160" height="40" fill="#1b6a3d"/>
+<rect x="40" y="80" width="160" height="40" fill="#123f22"/>
+<rect x="40" y="120" width="160" height="40" fill="#1b6a3d"/>
+<rect x="40" y="160" width="160" height="40" fill="#123f22"/>
+</g>
+<g stroke="#ffffff" stroke-width="7" stroke-linecap="round">
+<line x1="120" y1="120" x2="96" y2="96"/>
+<line x1="120" y1="120" x2="144" y2="96"/>
+<line x1="120" y1="120" x2="96" y2="144"/>
+<line x1="120" y1="120" x2="144" y2="144"/>
+</g>
+<circle cx="96" cy="96" r="11" fill="#ffffff"/>
+<circle cx="144" cy="96" r="11" fill="#ffffff"/>
+<circle cx="96" cy="144" r="11" fill="#ffffff"/>
+<circle cx="144" cy="144" r="11" fill="#ffffff"/>
+<circle cx="120" cy="120" r="13" fill="#ffffff"/>
+<circle cx="120" cy="120" r="6" fill="#14532d"/>
+</svg>

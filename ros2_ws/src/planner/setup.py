@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'swarming'
+package_name = 'planner'
 
 setup(
     name=package_name,
@@ -10,15 +10,17 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/swarming/launch',
-        ['launch/swarm_launch.xml'])
+        ('share/planner/launch',
+        ['launch/swarm_launch.xml']),
+        ('share/planner/rviz',
+        ['rviz/swarm.rviz'])
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='dheeraj',
+    maintainer='Dheeraj Sankar',
     maintainer_email='dheerajsankar2@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='ROS2 planner nodes for multi-drone agricultural coverage missions',
+    license='MIT',
     extras_require={
         'test': [
             'pytest',
@@ -26,9 +28,10 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'drone_node = swarming.drone_node:main',
-            'mission_manager = swarming.mission_manager:main',
-            'visualization = swarming.visualization:main'
+            'drone_node = planner.drone_node:main',
+            'mission_manager = planner.mission_manager:main',
+            'visualization = planner.visualization:main',
+            'fleet_gui = planner.fleet_gui:main'
 
         ],
     },

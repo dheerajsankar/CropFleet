@@ -38,6 +38,11 @@ temp/
 
 # RViz configs (optional)
 *.rviz
+# ...except the swarm demo config used by swarm_launch.xml
+!ros2_ws/src/planner/rviz/swarm.rviz
+
+# SITL launcher logs (headless mode)
+.sitl_logs/
 
 # ROS bag files
 *.db3

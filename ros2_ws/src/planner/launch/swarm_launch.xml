@@ -1,0 +1,77 @@
+<launch>
+
+    <!-- Disable GUI nodes when running headless (e.g. in Docker without X11):
+         ros2 launch planner swarm_launch.xml use_rviz:=false use_gui:=false -->
+    <arg name="use_rviz" default="true"/>
+    <arg name="use_gui" default="true"/>
+
+    <node
+        pkg="planner"
+        exec="mission_manager"
+        name="mission_manager"
+        output="screen"
+    >
+        <param name="num_drones" value="2"/>
+    </node>
+
+    <node
+        pkg="planner"
+        exec="visualization"
+        name="visualization"
+        output="screen"
+    />
+
+    <!--
+      PX4 instance mapping (see launch_sitl.sh):
+        px4 -i 1  ->  topics /px4_1/fmu/...  MAV_SYS_ID 2  spawned at world (0, 0)
+        px4 -i 2  ->  topics /px4_2/fmu/...  MAV_SYS_ID 3  spawned at world (4, 0)
+      spawn_east/spawn_north tell each node where its PX4 local NED origin sits
+      in the shared field/world frame.
+      Set simulate_failure to true on drone1 to demo mission reassignment.
+    -->
+    <node
+        pkg="planner"
+        exec="drone_node"
+        name="drone1"
+        output="screen"
+    >
+        <param name="drone_id" value="drone1"/>
+        <param name="px4_ns" value="px4_1"/>
+        <param name="target_system" value="2"/>
+        <param name="spawn_east" value="0.0"/>
+        <param name="spawn_north" value="0.0"/>
+        <param name="simulate_failure" value="false"/>
+    </node>
+
+    <node
+        pkg="planner"
+        exec="drone_node"
+        name="drone2"
+        output="screen"
+    >
+        <param name="drone_id" value="drone2"/>
+        <param name="px4_ns" value="px4_2"/>
+        <param name="target_system" value="3"/>
+        <param name="spawn_east" value="4.0"/>
+        <param name="spawn_north" value="0.0"/>
+        <param name="simulate_failure" value="false"/>
+    </node>
+
+    <node
+        pkg="planner"
+        exec="fleet_gui"
+        name="fleet_gui"
+        output="screen"
+        if="$(var use_gui)"
+    />
+
+    <node
+        pkg="rviz2"
+        exec="rviz2"
+        name="rviz2"
+        output="screen"
+        args="-d $(find-pkg-share planner)/rviz/swarm.rviz"
+        if="$(var use_rviz)"
+    />
+
+</launch>

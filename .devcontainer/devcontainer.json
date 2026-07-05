@@ -1,0 +1,60 @@
+{
+  "name": "CropFleet-Core",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "args": {
+      "ROS_DISTRO": "humble",
+      "PX4_MSGS_BRANCH": "main",
+      "BUILD_JOBS": "2"
+    }
+  },
+
+  // Mount the repo as the live workspace; the image already has all deps built.
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/CropFleet-Core,type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/CropFleet-Core",
+
+  // X11 forwarding for PyQt5 fleet GUI (Linux host).
+  // On macOS: install XQuartz, enable network clients, run `xhost + 127.0.0.1`,
+  // then set DISPLAY=host.docker.internal:0 before opening VS Code.
+  "mounts": [
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+  ],
+
+  "remoteEnv": {
+    "ROS_DOMAIN_ID": "0",
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "QT_X11_NO_MITSHM": "1",
+    "PIP_BREAK_SYSTEM_PACKAGES": "1"
+  },
+
+  // Wire the live mounted source into the pre-built ROS workspace and rebuild.
+  "postCreateCommand": "bash /workspaces/CropFleet-Core/.devcontainer/setup.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylance",
+        "ms-iot.vscode-ros",
+        "ms-vscode.cpptools",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "ros.distro": "humble",
+        "editor.formatOnSave": true,
+        "python.analysis.extraPaths": [
+          "/ros2_ws/install/planner/lib/python3.10/site-packages",
+          "/ros2_ws/install/mission_msg/lib/python3.10/site-packages",
+          "/opt/ros/humble/lib/python3.10/site-packages"
+        ],
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  "remoteUser": "root"
+}

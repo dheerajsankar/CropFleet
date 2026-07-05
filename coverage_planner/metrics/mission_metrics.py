@@ -5,8 +5,8 @@ def calculate_all_metrics(mission_waypoints, ordered_segments):
 
     # Calculate total distance traveled
     for i in range(1, len(mission_waypoints)):
-        x1, y1 = mission_waypoints[i - 1]
-        x2, y2 = mission_waypoints[i]
+        x1, y1, _ = mission_waypoints[i - 1]
+        x2, y2, _ = mission_waypoints[i]
         distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
         total_distance += distance
     coverage_distance=0.0

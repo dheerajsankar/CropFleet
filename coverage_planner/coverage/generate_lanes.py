@@ -1,5 +1,7 @@
 
 from shapely.geometry import LineString, MultiLineString
+
+
 def generate_lanes(polygon, lane_spacing,direction = "vertical"):
     min_x, min_y, max_x, max_y = polygon.bounds
     coverage_segments = []
