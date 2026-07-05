@@ -2,7 +2,7 @@
 
 ![CropFleet logo](media/logo.png)
 
-**Multi-drone agricultural coverage planning and simulation stack** — plan spray-coverage missions over real field polygons, split them across a drone fleet, and fly them with PX4 SITL in Gazebo, with live RViz visualization and a fleet telemetry dashboard.
+**Multi-drone agricultural coverage planning and simulation stack** plan spray-coverage missions over real field polygons, split them across a drone fleet, and fly them with PX4 SITL in Gazebo, with live RViz visualization and a fleet telemetry dashboard.
 
 The flagship demo: **two PX4 x500 drones swarming over a green crop field** whose size and shape exactly match the real field polygon in `research/field.geojson` (~82 m × 89 m, ~0.5 ha), each spraying its share of the field lane by lane, with automatic mission reassignment if a drone fails.
 
@@ -73,7 +73,7 @@ CropFleet/
 
 ## Quick Start
 
-### Option A — Full Gazebo swarm demo (Linux)
+### Option A  Full Gazebo swarm demo (Linux)
 
 Prerequisites: Ubuntu 22.04, [ROS2 Humble](https://docs.ros.org/en/humble/Installation.html), a built [PX4-Autopilot](https://github.com/PX4/PX4-Autopilot) checkout, gz sim, and [Micro-XRCE-DDS-Agent](https://github.com/eProsima/Micro-XRCE-DDS-Agent).
 
@@ -93,7 +93,7 @@ cd ~/CropFleet && ./launch_sitl.sh
 
 `launch_sitl.sh` links the crop-field world into the PX4 tree, starts Gazebo with two x500 vehicles (`px4 -i 1` / `px4 -i 2`), one MicroXRCEAgent, and the full planner stack (RViz + fleet GUI included). Set `PX4_DIR` if PX4 lives elsewhere.
 
-### Option B — Planner stack only (Docker, any OS)
+### Option B  Planner stack only (Docker, any OS)
 
 ```bash
 docker compose build
@@ -103,9 +103,9 @@ docker compose exec cropfleet bash
 ros2 launch planner swarm_launch.xml use_rviz:=false use_gui:=false
 ```
 
-The image contains ROS2 Humble, `px4_msgs`, MicroXRCEAgent, and the built workspace — but not PX4/Gazebo, so drone nodes will wait for a simulator. For GUI windows on Linux hosts run `xhost +local:docker` first and drop the `use_rviz`/`use_gui` flags; on macOS use XQuartz with `DISPLAY=host.docker.internal:0`.
+The image contains ROS2 Humble, `px4_msgs`, MicroXRCEAgent, and the built workspace  but not PX4/Gazebo, so drone nodes will wait for a simulator. For GUI windows on Linux hosts run `xhost +local:docker` first and drop the `use_rviz`/`use_gui` flags; on macOS use XQuartz with `DISPLAY=host.docker.internal:0`.
 
-### Option C — Devcontainer (development)
+### Option C  Devcontainer (development)
 
 Open the folder in VS Code → **Reopen in Container**. Source is live-mounted and symlink-installed, so Python edits apply without rebuilding.
 
@@ -148,14 +148,14 @@ Plots both drones' lanes, headings, and per-drone coverage metrics with matplotl
 
 ### Failure recovery
 
-Set `simulate_failure:=true` on one drone (see `swarm_launch.xml`): it stops mid-mission, publishes `FAILED`, and the mission manager appends its remaining waypoints to an active drone's mission — the survivor finishes both halves of the field.
+Set `simulate_failure:=true` on one drone (see `swarm_launch.xml`): it stops mid-mission, publishes `FAILED`, and the mission manager appends its remaining waypoints to an active drone's mission  the survivor finishes both halves of the field.
 
 ---
 
 ## Troubleshooting
 
-- **Drones sit on the ground, node warns "no VehicleStatus received"** — PX4 message versioning suffixes topics (`/fmu/out/vehicle_status_v4`, `_v1`, …) and the suffix depends on your PX4 commit. Check `ros2 topic list` and set the `vehicle_status_topic` / `local_position_topic` / `battery_status_topic` parameters in `swarm_launch.xml` to match. Also confirm MicroXRCEAgent is running on udp 8888.
-- **`ModuleNotFoundError: ament_package` when building in Docker** — your shell isn't sourced (`docker exec` bypasses the entrypoint). `source /opt/ros/humble/setup.bash`, or rebuild the image (sourcing is baked into `.bashrc`).
+- **Drones sit on the ground, node warns "no VehicleStatus received"**  PX4 message versioning suffixes topics (`/fmu/out/vehicle_status_v4`, `_v1`, …) and the suffix depends on your PX4 commit. Check `ros2 topic list` and set the `vehicle_status_topic` / `local_position_topic` / `battery_status_topic` parameters in `swarm_launch.xml` to match. Also confirm MicroXRCEAgent is running on udp 8888.
+- **`ModuleNotFoundError: ament_package` when building in Docker**  your shell isn't sourced (`docker exec` bypasses the entrypoint). `source /opt/ros/humble/setup.bash`, or rebuild the image (sourcing is baked into `.bashrc`).
 - **Changed the field?** Replace `research/field.geojson`, then regenerate the Gazebo mesh: `python3 simulation/scripts/generate_field_world.py`. Update `config/sitl_home.env` to the new first vertex.
 
 ---
@@ -168,4 +168,4 @@ ROS2 Humble · PX4 (SITL, offboard mode via uXRCE-DDS) · Gazebo (gz sim) · Pyt
 
 ## License
 
-MIT © 2026 [Dheeraj Sankar](mailto:dheerajsankar2@gmail.com) — see [LICENSE](LICENSE).
+MIT © 2026 [Dheeraj Sankar](mailto:dheerajsankar2@gmail.com)  see [LICENSE](LICENSE).
